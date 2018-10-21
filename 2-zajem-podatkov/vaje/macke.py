@@ -87,16 +87,15 @@ def page_to_ads(directory, filename):
 
 vzorec = re.compile(
     r'<table><tr><td><a title=(?P<ime>\w+)'
-    r'<div class="price">(?P<cena>.+?)</div> ',
-    re.DOTALL
-)
+    r'<div class="price">(?P<cena>.+?)</div>.*?'
+    r'href=.*(?P<opis>.+?)<div class="additionalInfo">.*?' ,
+    re.DOTALL)
 
-
-podatki_oglasov = []
 def get_dict_from_ad_block(directory, filename):
     '''Build a dictionary containing the name, description and price
     of an ad block.'''
     seznam_oglasov = page_to_ads(directory, filename)
+    podatki_oglasov = []
     for oglas in seznam_oglasov:
         for ujemanje in vzorec.finditer(oglas):
             podatki_oglasa = ujemanje.group(0)

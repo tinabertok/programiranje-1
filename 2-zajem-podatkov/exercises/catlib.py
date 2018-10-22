@@ -9,11 +9,11 @@ import csv
 ###############################################################################
 
 # define the URL of the main page of the bolha cats listing
-cats_frontpage_url = 'TODO'
+cats_frontpage_url = 'http://www.bolha.com/zivali/male-zivali/macke/'
 # the directory to which we save our data
-cat_directory = 'TODO'
+cat_directory = 'cat_data'
 # the filename we use to save the frontpage
-frontpage_filename = 'TODO'
+frontpage_filename = 'frontpage.html'
 # the filename for the CSV file for the extracted data
 csv_filename = 'TODO'
 

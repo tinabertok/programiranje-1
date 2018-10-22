@@ -7,7 +7,7 @@ Pressing `Tab` displays completions for the current class, `Shift+Tab` shows doc
 
 If you installed Python via the Anaconda package, you already have jupyter notebooks. Otherwise, you should be able to install it using `pip`, by running the command `pip3 install jupyter`.
 
-To start using the jupyter notebook, open a command line in the root directory of your git project, and run `jupyter notebook`.
+To start using the jupyter notebook, open a command line in the root directory of your git project, and run `jupyter -user notebook`.
 This should automatically open a new tab in your browser.
 
 ### Tasks:

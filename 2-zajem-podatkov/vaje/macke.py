@@ -61,7 +61,8 @@ def save_frontpage(url, ime_datoteke):
 
 
 def read_file_to_string(directory, filename):
-     with open(filename, encoding='utf-8') as datoteka:
+    print(filename)
+    with open(filename, encoding='utf-8') as datoteka:
          return datoteka.read()
 '''Return the contents of the file "directory"/"filename" as a string.'''
 
@@ -85,31 +86,36 @@ def page_to_ads(directory, filename):
 # podatke o imenu, ceni in opisu v oglasu.
 
 
-vzorec = re.compile(
-    r'<table><tr><td><a title=(?P<ime>\w+)'
-    r'<div class="price">(?P<cena>.+?)</div>.*?'
-    r'href=.*(?P<opis>.+?)<div class="additionalInfo">.*?' ,
-    re.DOTALL)
-
 def get_dict_from_ad_block(directory, filename):
     '''Build a dictionary containing the name, description and price
     of an ad block.'''
+    vzorec = re.compile(
+    r'<h3><a title="(?P<ime>.*?)"'
+    r'.*?'
+    r'</a></h3>\n\n\s*(?P<opis>.*?)\s*<div class="additionalInfo">'
+    r'.*?'
+    r'<div class="price">(<span>)?(?P<cena>.+?)(</span>)?</div>.*?',
+    re.DOTALL)
     seznam_oglasov = page_to_ads(directory, filename)
     podatki_oglasov = []
     for oglas in seznam_oglasov:
         for ujemanje in vzorec.finditer(oglas):
-            podatki_oglasa = ujemanje.group(0)
+            podatki_oglasa = ujemanje.groupdict()
             podatki_oglasov.append(podatki_oglasa)
     return podatki_oglasov
+
 
 # Definirajte funkcijo, ki sprejme ime in lokacijo datoteke, ki vsebuje
 # besedilo spletne strani, in vrne seznam slovarjev, ki vsebujejo podatke o
 # vseh oglasih strani.
 
 
-def ads_from_file(TODO):
+def ads_from_file(filename, directory):
     '''Parse the ads in filename/directory into a dictionary list.'''
-    return TODO
+    vsebina = read_file_to_string(directory, filename)
+    oglasi = page_to_ads(directory, filename)
+    seznam_slovarjev = get_dict_from_ad_block(directory, filename)
+    return seznam_slovarjev
 
 ###############################################################################
 # Obdelane podatke želimo sedaj shraniti.
@@ -134,5 +140,6 @@ def write_csv(fieldnames, rows, directory, filename):
 # stolpce [fieldnames] pridobite iz slovarjev.
 
 
-def write_cat_ads_to_csv(TODO):
-    return TODO
+def write_cat_ads_to_csv(seznam_slovarjev):
+    write_csv(['ime', 'opis', 'cena'], seznam_slovarjev, cat_directory, csv_filename)
+    return None

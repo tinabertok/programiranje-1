@@ -15,12 +15,17 @@ Možne dopolnitve dobimo s tipko `Tab`, dokumentacijo pa s `Shift+Tab`.
 `pip install jupyter` oz. `pip3 install jupyter`, odvisno od vaše namestitve.
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 To start using the jupyter notebook, open a command line in the root directory of your git project, and run `jupyter -user notebook`.
 This should automatically open a new tab in your browser.
 =======
 Za zagon uporabite ukaz `jupyter notebook`, ki bi moral odpreti novo okno ali
 zavihek vašega spletnega brskalnika.
 >>>>>>> 6f2c567309c420a908c094a18af2a977ae605a7c
+=======
+Za zagon uporabite ukaz `jupyter notebook`, ki bi moral odpreti novo okno ali
+zavihek vašega spletnega brskalnika.
+>>>>>>> 384a65360542495aea2b780c5403c7be52ea9298
 
 ### Naloge:
 

@@ -113,9 +113,6 @@ let rec slice i k list =
     levi2
 
 
-
-
-
 (*----------------------------------------------------------------------------*]
  Funkcija [insert x k list] na [k]-to mesto seznama [list] vrine element [x].
  Če je [k] izven mej seznama, ga funkcija doda na začetek oziroma na konec.
@@ -126,7 +123,14 @@ let rec slice i k list =
  - : int list = [1; 0; 0; 0; 0; 0]
 [*----------------------------------------------------------------------------*)
 
-let rec insert = ()
+let rec insert x k list = 
+  match x, k, list with
+  |x, k, [] -> [x]
+  |x, k, list when (k<0) -> k :: list
+  |x, 0, list -> x :: list
+  |x, k, y :: ys -> y :: insert x (k-1) ys
+
+
 
 (*----------------------------------------------------------------------------*]
  Funkcija [rotate n list] seznam zavrti za [n] mest v levo. Predpostavimo, da
@@ -136,7 +140,18 @@ let rec insert = ()
  - : int list = [3; 4; 5; 1; 2]
 [*----------------------------------------------------------------------------*)
 
-let rec rotate = ()
+let rec rotate n list = 
+  match n, list with
+  |n, [] -> [](*če je n enak size(list) vrni enak seznam*)
+
+
+let obrni list =
+  let obrni' acc = function
+    |[] -> acc
+    |glava :: rep -> obrni' (glava :: acc) rep
+    in
+    obrni' [] list
+
 
 (*----------------------------------------------------------------------------*]
  Funkcija [remove x list] iz seznama izbriše vse pojavitve elementa [x].
@@ -145,7 +160,14 @@ let rec rotate = ()
  - : int list = [2; 3; 2; 3]
 [*----------------------------------------------------------------------------*)
 
-let rec remove = ()
+let rec remove x list = 
+  match x, list with
+  |x, [] -> []
+  |x, y :: ys -> y :: remove x ys
+  |x, x :: ys -> remove x ys
+  |x, ys :: x -> remove x ys
+
+
 
 (*----------------------------------------------------------------------------*]
  Funkcija [is_palindrome] za dani seznam ugotovi ali predstavlja palindrom.
@@ -157,7 +179,18 @@ let rec remove = ()
  - : bool = false
 [*----------------------------------------------------------------------------*)
 
-let rec is_palindrome = ()
+let obrni list =
+  let obrni' acc = function
+    |[] -> acc
+    |glava :: rep -> obrni' (glava :: acc) rep
+    in
+    obrni' [] list
+
+
+let rec is_palindrome list = 
+  if list = obrni list then true
+  else false
+
 
 (*----------------------------------------------------------------------------*]
  Funkcija [max_on_components] sprejme dva seznama in vrne nov seznam, katerega
@@ -168,7 +201,9 @@ let rec is_palindrome = ()
  - : int list = [5; 4; 3; 3; 4]
 [*----------------------------------------------------------------------------*)
 
-let rec max_on_components = ()
+let rec max_on_components list_1 list_2 = 
+  match list_1, list_2 with 
+  |x :: xs, y :: ys when x>y -> x :: max_on_components xs ys
 
 (*----------------------------------------------------------------------------*]
  Funkcija [second_largest] vrne drugo največjo vrednost v seznamu. Pri tem se
@@ -179,5 +214,12 @@ let rec max_on_components = ()
  # second_largest [1; 10; 11; 11; 5; 4; 10];;
  - : int = 10
 [*----------------------------------------------------------------------------*)
+
+let my_max = function
+  | [] -> failwith "Prazen seznam!"
+  | x::xs -> List.fold_left max x xs
+
+
+(*maksimum odstranimo iz seznama in poženemo še enkrat funkcijo my_max*)
 
 let rec second_largest = ()

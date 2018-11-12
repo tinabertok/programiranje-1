@@ -20,5 +20,10 @@
             "type": "shell",
             "command": "C:\\OCaml64\\usr\\local\\bin\\ocaml-env.exe exec -- C:\\OCaml64\\home\\BertokJ\\.opam\\4.06.1+mingw64c\\bin\\ocaml.exe -init \\\"${file}\\\""
         },
+        {
+            "label": "OCaml faks",
+            "type": "shell",
+            "command": "ocaml -init \\\"${file}\\\""
+        },
     ]
 }

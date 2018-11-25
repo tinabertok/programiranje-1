@@ -109,8 +109,12 @@ let primer = Integer(5, Bool(true, (Bool(false, Integer(7, Empty)))))
 let rec intbool_map f_int f_bool ib_list =
   match ib_list with 
   | Empty -> Empty
-  | Integer (i, xs) -> Integer( f_int i, intbool_map f_int f_bool xs)
-  | Bool (i, xs) -> Bool(f_bool i, intbool_map f_int f_bool xs)
+  | Integer (i, is) -> Integer(f_int i, intbool_map f_int f_bool is)
+  | Bool (b, bs) -> Bool(f_bool b, intbool_map f_int f_bool bs)
+
+
+
+
 
 (*----------------------------------------------------------------------------*]
  Funkcija [intbool_reverse] obrne vrstni red elementov [intbool_list] seznama.
@@ -118,21 +122,24 @@ let rec intbool_map f_int f_bool ib_list =
 [*----------------------------------------------------------------------------*)
   
 (* akumulatorju nastavimo tip intbool list, da se nam ze takoj na zacetku pritozi ce je kaj narobe*)
+
 let rec intbool_reverse list =
-  let rec intbool_reverse' (acc : intbool_list) list =
-    match list with
+  let rec intbool_reverse' (acc : intbool_list) list = 
+    match list with 
     | Empty -> acc
-    | Integer(i, xs) -> intbool_reverse' (Integer(i, acc)) xs
-    | Bool(i, xs) -> intbool_reverse' (Bool(i, acc)) xs
-  
-  in 
+    | Integer(i, is) -> intbool_reverse' (Integer(i, acc)) is
+    | Bool(b, bs) -> intbool_reverse' (Bool(b, acc)) bs
+  in
   intbool_reverse' Empty list
+
+
 
 (*----------------------------------------------------------------------------*]
  Funkcija [intbool_separate ib_list] loči vrednosti [ib_list] v par [list]
  seznamov, kjer prvi vsebuje vse celoštevilske vrednosti, drugi pa vse logične
  vrednosti. Funkcija je repno rekurzivna in ohranja vrstni red elementov.
 [*----------------------------------------------------------------------------*)
+
 let rec intbool_separate ib_list = 
   let rec intbool_separate' acc1 acc2 ib_list=
     match ib_list with

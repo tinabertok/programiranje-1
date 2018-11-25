@@ -4,28 +4,45 @@
 
 (* 1.1) Definirajte funkcijo, ki vzame par in zamenja komponenti para.
    Primer: /obrni (2, 4) = (4, 2)/ *)
- let obrni = failwith "dopolni me"
+ let obrni = function
+  | (x, y) -> (y, x)
+ 
+
+
 
 (* 1.2) Definirajte funkcijo, ki vzame par p in vrednost x in zamenja drugo
    komponento para p z x.
    Primer: /zamenjaj_drugo (2, 4) 7 = (2, 7)/ *)
- let zamenjaj_drugo = failwith "dopolni me"
+ let zamenjaj_drugo p x = 
+  match p with 
+  | (i, j) -> (i, x)
 
 (* 1.3) Definirajte funkcijo, ki vzame seznam parov in izračuna nov seznam parov,
    ki imajo drugo komponento zamenjano z 42.
    Primer: /vsem_zamenjaj_drugo_z_42 [(12, 1); (2, 4)] = [(12, 42); (2, 42)]/ *)
- let vsem_zamenjaj_drugo_z_42 = failwith "dopolni me"
+ let rec vsem_zamenjaj_drugo_z_42 = function
+  | [] -> []
+  | (x, y) :: xs -> (x, 42) :: (vsem_zamenjaj_drugo_z_42 xs) 
+
 
 (* 1.4) Definirajte funkcijo, ki varno vrne glavo seznama v primeru, ko seznam ni prazen.
    Uporabite tip option.
    Primer: /glava [1; 2; 3] = Some 1/ *)
- let glava = failwith "dopolni me"
+ let glava = function
+  | [] -> None
+  | x :: xs -> Some x
+
+
 
 (* 1.5) Definirajte funkcijo, vzame funkcijo (f: 'a -> 'b), neko vrednost (x : 'a) in
    celo število n. Funkcija naj vrne vrednost, ki jo dobimo če f n-krat uporabimo na x,
    torej f (f ... (f x)...).
    Primer: /uporabi_veckrat succ 0 420 = 420/ *)
- let uporabi_veckrat = failwith "dopolni me"
+ let rec uporabi_veckrat f x n = 
+  match n, x with
+  | 0, x -> x 
+  | 1, x -> f x 
+  | n, x -> uporabi_veckrat f (f x) (n - 1)
 
 (* ======================================= *)
 (* 2. naloga: podatkovni tipi in rekurzija *)
@@ -36,7 +53,9 @@
    tipom /'a drevo/ z enim konstruktorjem, ki sprejme:
    - vrednost (koren) tipa /'a/ in
    - seznam (gozd) dreves tipa /'a drevo/. *)
-type 'a drevo = DopolniMe
+type 'a drevo = 
+  | Prazno 
+  | Sestavljeno of 'a drevo * 'a drevo
 
 (* 2.2) Definirajte naslednja rožna drevesa:
 
@@ -78,4 +97,3 @@ let globoko_drevo = failwith "dopolni me"
    Opomba: kot ste videli na vajah, nekatere funkcije iz modula List,
    na primer List.map, niso repno rekurzivne, zato se jim raje
    izognite. *)
-let zlozi = failwith "dopolni me"

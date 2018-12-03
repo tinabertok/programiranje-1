@@ -5,6 +5,20 @@
  trees, which are either empty or they contain some data and two (possibly
  empty) subtrees. We assume no further structure of the trees.
 [*-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*)
+type 'a tree = 
+    | Empty
+    | Node of 'a tree *  'a * 'a tree
+(*
+type 'a tree =
+    | Empty 
+    | Leaf 'a
+    | Node of 'a tree *  'a * 'a tree
+
+iz tega da dodamo leaf ne profitiramo je le kozmetični popravek 
+Leaf x = Node (Empty, x, Empty)
+*)
+
+let leaf x = Node(Empty, x, Empty)
 
 
 (*----------------------------------------------------------------------------*]
@@ -17,6 +31,10 @@
        /   / \
       0   6   11
 [*----------------------------------------------------------------------------*)
+let test_tree = 
+    let left_tree = Node(leaf 0, 2, Empty) in
+    let right_tree = Node(leaf 6, 7, leaf 11) in
+    Node(left_tree, 5, right_tree)
 
 
 (*----------------------------------------------------------------------------*]
@@ -34,6 +52,10 @@
  Node (Empty, 2, Node (Empty, 0, Empty)))
 [*----------------------------------------------------------------------------*)
 
+let rec mirror = function
+    | Empty -> Empty
+    | Node(lt, x, rt) -> Node(mirror rt, x, mirror lt)
+
 
 (*----------------------------------------------------------------------------*]
  The function [height] returns the height (or depth) of the tree and the
@@ -44,6 +66,37 @@
  # size test_tree;;
  - : int = 6
 [*----------------------------------------------------------------------------*)
+
+let rec height = function
+    | Empty -> 0
+    | Node(lt, x, rt) -> 
+    if height lt > height rt then 1 + height lt
+    else 1 + height rt
+
+let rec size = function 
+    | Empty -> 0
+    | Node(lt, x, rt) -> 1 + size lt + size rt
+
+
+(* probajmo napisati še repno rekurzivni size, rabimo še dodaten akumulator da si zapomnimo vsa drevesa ki jih moramo še obdelat*)
+
+let tl_rec_size tree =
+    let rec size' acc queue =
+        (*Pogledamo, kateri je naslednji element v vrsti za obravnano.*)
+        match queue with
+        | [] -> acc
+        | t :: ts -> (
+            (*Obravnavamo drevo.*)
+            match t with 
+            | Empty -> size' acc ts (* Prazno drevo samo odstranimo iz vrste.*)
+            | Node(lt, x, rt) -> 
+                let new_acc = acc + 1 in (*obravnavamo vozlišče*)
+                let new_queue = lt :: rt :: ts in (*Dodamo poddrevesa v vrsto.*)
+                size' new_acc new_queue
+        )
+        in
+        (*Zaženemo pomožno funkcijo*)
+        size' 0 [tree]
 
 
 (*----------------------------------------------------------------------------*]
@@ -56,6 +109,10 @@
  Node (Node (Empty, true, Empty), true, Node (Empty, true, Empty)))
 [*----------------------------------------------------------------------------*)
 
+let rec map_tree f tree =
+    match tree with
+    | Empty -> Empty
+    | Node(lt, x, rt) -> Node (map_tree f lt, f x, map_tree f rt)
 
 (*----------------------------------------------------------------------------*]
  The function [list_of_tree] returns the list of all elements in the tree. If
@@ -64,6 +121,10 @@
  # list_of_tree test_tree;;
  - : int list = [0; 2; 5; 6; 7; 11]
 [*----------------------------------------------------------------------------*)
+
+let rec list_of_tree = function
+    | Empty -> []
+    | Node(lt, x, rt) -> list_of_tree lt @ [x] @ list_of_tree rt
 
 
 (*----------------------------------------------------------------------------*]
@@ -76,6 +137,21 @@
  # test_tree |> mirror |> is_bst;;
  - : bool = false
 [*----------------------------------------------------------------------------*)
+
+
+let rec narascajoce = function
+    | [] -> true
+    | [x] -> true
+    | x :: y :: xs when x <= y -> narascajoce (y :: xs)
+    | x :: y :: xs -> false
+
+let is_bst tree = 
+    match tree with 
+    | Empty -> true
+    | Node(lt, x, rt) ->
+    if narascajoce(list_of_tree tree) then true
+    else false
+
 
 
 (*-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*]
@@ -92,6 +168,30 @@
  - : bool = false
 [*----------------------------------------------------------------------------*)
 
+let rec insert x tree = 
+    match tree with 
+    | Empty -> leaf x
+    | Node(lt, y, rt) -> 
+    if x = y then 
+        tree
+    else if x < y then
+        Node(insert x lt, y, rt)
+    else
+        Node(lt, y, insert x rt)
+
+
+
+let rec member x tree =
+    match tree with
+    | Empty -> false
+    | Node(lt, y, rt) ->
+    if x = y then 
+        true
+    else if x < y then
+        member x lt 
+    else 
+        member x rt
+
 
 (*----------------------------------------------------------------------------*]
  The function [member2] does not assume that the tree is a bst.
@@ -99,6 +199,15 @@
  Note: Think about the differences of time complexity for [member] and 
  [member2] assuming an input tree with n nodes and depth of log(n). 
 [*----------------------------------------------------------------------------*)
+
+let rec member2 x tree = 
+    match tree with
+    | Empty -> false
+    | Node(lt, y, rt) -> 
+    if x = y then true
+    else if member2 x lt || member2 x rt then true
+    else false
+
 
 
 (*----------------------------------------------------------------------------*]
@@ -113,6 +222,29 @@
  # pred (Node(Empty, 5, leaf 7));;
  - : int option = None
 [*----------------------------------------------------------------------------*)
+
+let rec min = function
+    | Empty -> None
+    | Node (Empty, x, _) -> Some x
+    | Node(lt, x, rt) -> min lt 
+
+let rec succ = function
+    | Empty -> None
+    | Node(lt, x, rt) -> min rt
+
+
+
+let rec max = function
+    | Empty -> None
+    | Node (_, x, Empty) -> Some x
+    | Node(lt, x, rt) -> max rt 
+
+
+let rec pred = function
+    | Empty -> None
+    | Node(lt, x, rt) -> max lt
+
+
 
 
 (*----------------------------------------------------------------------------*]
@@ -129,6 +261,14 @@
 [*----------------------------------------------------------------------------*)
 
 
+(*let delete x bst =
+    match bst with 
+    | Empty -> Empty
+    | Node(lt, y, rt) -> 
+    if member x bst then 
+        if x = y then Node(lt, succ bst, )
+
+    Node(lt, pred bst, Empty) -> lt*)
 (*-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*]
  DICTIONARIES
 
@@ -139,7 +279,11 @@
  dictionary requires a type for keys and a type for values, we parametrize the
  type as [('key, 'value) dict].
 [*-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*)
+type ('k, 'v) dict  =
+    | Empty 
+    | Node of ('k, 'v) dict * ('k * 'v ) * ('k, 'v) dict
 
+    
 
 (*----------------------------------------------------------------------------*]
  Write the test case [test_dict]:
@@ -149,6 +293,14 @@
          /
      "c":-2
 [*----------------------------------------------------------------------------*)
+
+let leaf (k, v) = Node(Empty, (k, v) , Empty)
+
+let test_dict =
+    let ld = leaf ("a", 0) in
+    let rd = Node(leaf("c", -2), ("d", 2), Empty) in
+    Node (ld, ("b", 1), rd)
+
 
 (*----------------------------------------------------------------------------*]
  The function [dict_get key dict] returns the value with the given key. Because

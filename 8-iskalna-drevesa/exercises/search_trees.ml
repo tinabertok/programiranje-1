@@ -311,8 +311,17 @@ let test_dict =
  # dict_get "c" test_dict;;
  - : int option = Some (-2)
 [*----------------------------------------------------------------------------*)
-
-      
+let rec dict_get key dict =
+    match dict with
+    | Empty -> None
+    | Node(ld, (k, v), rd) -> 
+        (match String.compare key k with
+        | 0 -> Some v
+        | -1 -> dict_get key ld
+        | 1 -> dict_get key rd 
+        | _ -> None )
+    
+        
 (*----------------------------------------------------------------------------*]
  The function [print_dict] accepts a dictionary with key of type [string] and
  values of type [int] and prints (in the correct order) lines containing 
@@ -328,6 +337,13 @@ let test_dict =
  d : 2
  - : unit = ()
 [*----------------------------------------------------------------------------*)
+
+let rec print_dict = function
+    | Empty -> ""
+    | Node(ld, (k,v), rd) -> print_dict ld ^ print_string(k)^" : "^print_int(v) ^ print_dict rd
+
+
+
 
 
 (*----------------------------------------------------------------------------*]
@@ -348,4 +364,26 @@ let test_dict =
  d : 2
  - : unit = ()
 [*----------------------------------------------------------------------------*)
+(*
+let dict_insert key value dict = 
+    match dict with 
+    | Empty -> Empty
+    | Node(ld, (k,v), rd) -> 
+    if k = key then
+        dict
+    else if String.compare key k 
 
+
+
+let rec insert x tree = 
+    match tree with 
+    | Empty -> leaf x
+    | Node(lt, y, rt) -> 
+    if x = y then 
+        tree
+    else if x < y then
+        Node(insert x lt, y, rt)
+    else
+        Node(lt, y, insert x rt)
+
+*)

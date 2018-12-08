@@ -339,8 +339,8 @@ let rec dict_get key dict =
 [*----------------------------------------------------------------------------*)
 
 let rec print_dict = function
-    | Empty -> ""
-    | Node(ld, (k,v), rd) -> print_dict ld ^ print_string(k)^" : "^print_int(v) ^ print_dict rd
+    | Empty -> ()
+    | Node(ld, (k,v), rd) -> (print_dict ld);(print_string(k));(print_string(":"));(print_int(v));(print_string("\n"));(print_dict rd)
 
 
 
@@ -364,26 +364,16 @@ let rec print_dict = function
  d : 2
  - : unit = ()
 [*----------------------------------------------------------------------------*)
-(*
-let dict_insert key value dict = 
+
+let rec dict_insert key value dict = 
     match dict with 
-    | Empty -> Empty
+    | Empty -> leaf(key, value)
     | Node(ld, (k,v), rd) -> 
     if k = key then
-        dict
-    else if String.compare key k 
-
-
-
-let rec insert x tree = 
-    match tree with 
-    | Empty -> leaf x
-    | Node(lt, y, rt) -> 
-    if x = y then 
-        tree
-    else if x < y then
-        Node(insert x lt, y, rt)
+        Node(ld, (key, value), rd)
+    else if key < k then
+        Node(dict_insert key value ld, (k,v), rd)
     else
-        Node(lt, y, insert x rt)
+        Node(ld, (k,v), dict_insert key value rd)
 
-*)
+

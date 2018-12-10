@@ -261,14 +261,26 @@ let rec pred = function
 [*----------------------------------------------------------------------------*)
 
 
-(*let delete x bst =
+let rec delete x bst =
     match bst with 
-    | Empty -> Empty
-    | Node(lt, y, rt) -> 
-    if member x bst then 
-        if x = y then Node(lt, succ bst, )
+    | Empty -> Empty (*Empty case*)
+    | Node(Empty, y, Empty) when x = y -> Empty (*Leaf case*)
+    | Node(Empty, y, rt) when x = y -> rt (*One sided*)
+    | Node(lt, y, Empty) when x = y -> lt
+    | Node(lt, y, rt) when x <> y -> (*Recurse deeper*)
+        if x > y then
+            Node(lt, y, delete x rt)
+        else 
+            Node(delete x lt, y, rt)
+    | Node(lt, y, rt) -> (*Difficult case*)
+        match succ bst with 
+        | None -> failwith "HOW IS THIS POSSIBLE?!" (*This cannot happen*)
+        | Some z -> Node(lt, z, delete z rt)
+    
 
-    Node(lt, pred bst, Empty) -> lt*)
+
+
+
 (*-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*]
  DICTIONARIES
 

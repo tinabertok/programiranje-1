@@ -112,21 +112,19 @@ module Nat_peano : NAT = struct
       | Zero, Zero -> true
       | Zero, _ -> false
       | _, Zero -> false
-      | Succ n, Succ m -> eq n m 
+      | Succ n, Succ m -> eq (n - 1)  (m - 1)
 
-    let rec add x y =
-      match x, y with
-      | Zero, Zero -> Zero
-      | _, Zero -> x
-      | Zero, _ -> y
-      | Succ n, Succ m -> add n m
+    let rec add x = function
+    | Zero -> x
+    | Succ n -> Succ(add x n)
+
 
     let rec sub x y = 
       match x, y with
       | Zero, Zero -> Zero
       | _, Zero -> x
       | Zero, _ -> Zero
-      | Succ n, Succ m -> if n < m then Zero else sub n m 
+      | Succ n, Succ m -> if n < m then Zero else sub (n + 1) (m + 1) 
 
     
     let rec mult x y = 

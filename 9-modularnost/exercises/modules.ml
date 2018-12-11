@@ -54,9 +54,13 @@ module type NAT = sig
 
   val eq   : t -> t -> bool
   val zero : t
-  (* Add what's missing here! *)
-  (* val to_int : t -> int *)
-  (* val of_int : int -> t *)
+  val one : t
+  val add : t -> t -> t
+  val sub : t -> t -> t
+  val mult : t -> t -> t
+  val to_int : t -> int
+  val of_int : int -> t
+  
 end
 
 (*----------------------------------------------------------------------------*]
@@ -71,9 +75,15 @@ end
 module Nat_int : NAT = struct
 
   type t = int
-  let eq x y = failwith "later"
+
+  let eq x y = if x = y then true else false
   let zero = 0
-  (* Add what's missing here! *)
+  let one = 1
+  let add x y = x + y 
+  let sub x y = x - y
+  let mult x y = x * y
+  let to_int x = x
+  let of_int x = if x < 0 then failwith "Negative number!" else x
 
 end
 
@@ -90,10 +100,48 @@ end
 
 module Nat_peano : NAT = struct
 
-  type t = unit (* This needs to be changed! *)
-  let eq x y = failwith "later"
-  let zero = () (* This needs to be changed! *)
-  (* Add what's missing here! *)
+  type t = 
+    | Zero
+    | Succ of t 
+   
+    let zero = Zero
+    let one = Succ zero 
+
+    let rec eq x y =
+      match x, y with
+      | Zero, Zero -> true
+      | Zero, _ -> false
+      | _, Zero -> false
+      | Succ n, Succ m -> eq n m 
+
+    let rec add x y =
+      match x, y with
+      | Zero, Zero -> Zero
+      | _, Zero -> x
+      | Zero, _ -> y
+      | Succ n, Succ m -> add n m
+
+    let rec sub x y = 
+      match x, y with
+      | Zero, Zero -> Zero
+      | _, Zero -> x
+      | Zero, _ -> Zero
+      | Succ n, Succ m -> if n < m then Zero else sub n m 
+
+    
+    let rec mult x y = 
+      match x, y with
+      | Zero, Zero -> Zero
+      | _, Zero -> Zero
+      | Zero, _ -> Zero
+      | Succ n, Succ m -> add n (mult n (Succ m))
+
+    let rec to_int x = 
+      match x with
+      | Zero -> 0
+      | Succ n -> (to_int n) + 1
+
+    let rec of_int x = if x < 0 then Zero else Succ(of_int (x-1)) 
 
 end
 

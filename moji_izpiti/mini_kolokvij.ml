@@ -30,7 +30,10 @@ let rec narascajoce = function
   | a :: b :: bs when a <= x =< b -> a :: x :: b :: bs
   | a :: b :: bs when x > b -> a :: b :: (vstavi bs x ) *)
 
-
+  let rec inject cmp x lst =
+    match lst with
+    | [] -> [x]
+    | y :: t -> if cmp x y then x :: lst else y :: (inject cmp x t)
 
 
 (* -------- 4 -------- *)

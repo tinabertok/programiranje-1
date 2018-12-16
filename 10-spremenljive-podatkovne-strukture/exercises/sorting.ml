@@ -9,6 +9,12 @@
  val l : int list = [0; 1; 0; 4; 0; 9; 1; 2; 5; 4]
 [*----------------------------------------------------------------------------*)
 
+let rec randlist len max =
+  match len with
+  | 0 -> []
+  | 1 -> [Random.int(max)]
+  | _ -> Random.int(max) :: randlist (len - 1) max
+
 
 (*-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*]
  We can now use [randlist] to test our sorting functions (named [our_sort] in
@@ -17,6 +23,7 @@
  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  let test = (randlist 100 100) in (our_sort test = List.sort compare test);;
 [*-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*)
+let our_sort test = List.sort compare test
 
 
 (*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*]
@@ -34,12 +41,27 @@
  # insert 7 [];;
  - : int list = [7]
 [*----------------------------------------------------------------------------*)
-
+let rec insert y ys =
+  match ys with
+  | [] -> [y]
+  | [x] when x <= y -> x :: [y]
+  | [x] -> y :: [x]
+  | x :: xs -> if x <= y then x :: insert y xs else y :: x :: xs 
 
 (*----------------------------------------------------------------------------*]
  The empty list is sorted. The function [insertion_sort] sorts a list by
  consecutively inserting all of its elements into the empty list.
 [*----------------------------------------------------------------------------*)
+
+let rec insertion_sort list = 
+  let rec insertion_sort' acc list =
+    match list with
+    | [] -> acc
+    | x :: xs -> insertion_sort' (insert x acc) xs
+
+  in 
+  insertion_sort' [] list
+
 
 
 
@@ -52,6 +74,23 @@
  is the smallest element in [list] and [list'] is equal to [list] with the
  first occurance of [z] removed. If the list is empty it returns [None].
 [*----------------------------------------------------------------------------*)
+let rec remove x = function
+| [] -> []
+| y :: ys when y = x -> remove x ys
+| y :: ys -> y :: remove x ys  (*če y ni enak x*)
+
+
+let rec min list = 
+match list with 
+| [] -> failwith "Too short!"
+| x :: [] -> x
+| x :: y :: xs -> if x > y then min (y :: xs) else min (x :: xs)
+
+let min_and_rest list =
+  match list with 
+  | [] -> None
+  | [x] -> Some(x, [])
+  | x :: xs -> Some( min list, remove (min list) list)
 
 
 (*-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*]
@@ -72,8 +111,19 @@
  Hint: Use [min_and_rest] from the previous exercise.
 [*----------------------------------------------------------------------------*)
 
+let rec selection_sort list = 
+  let rec selection_sort' acc list = 
+    match list with
+    | [] -> acc
+    | x :: xs -> 
+      let y = min list in
+      let ys = remove (min list) list in
+      selection_sort' (insert y acc) ys 
 
-
+  in 
+  selection_sort' [] list
+    
+ 
 (*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*]
  Selection Sort with Arrays
 [*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*)
@@ -100,7 +150,11 @@
  # test;;
  - : int array = [|0; 4; 2; 3; 1|]
 [*----------------------------------------------------------------------------*)
-
+let swap a i j = 
+  let t = a.(i) in
+  a.(i) <- a.(j);
+  a.(j) <- t
+  
 
 (*----------------------------------------------------------------------------*]
  The function [index_min a lower upper] computes the index of the smallest
@@ -108,6 +162,10 @@
  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  index_min [|0; 2; 9; 3; 6|] 2 4 = 4
 [*----------------------------------------------------------------------------*)
+let index_min a lower upper = 
+  let l = a.(lower) in 
+  let u = a.(upper) in
+  if l <= u then lower else upper
 
 
 (*----------------------------------------------------------------------------*]
@@ -116,4 +174,15 @@
  Hint: To test your function, you can use the functions [Array.of_list] and
  [Array.to_list] combined with [randlist].
 [*----------------------------------------------------------------------------*)
+
+let selection_sort_array  array = 
+  let n = Array.length array in 
+  for i = 0 to n do
+    let a = array.(i) in 
+    array.(i) <- array.(index_min a i (i+1));
+    array.(index_min a i (i+1)) <- a
+  done 
+
+
+
 

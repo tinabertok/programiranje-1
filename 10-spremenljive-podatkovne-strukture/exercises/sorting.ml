@@ -111,7 +111,7 @@ let min_and_rest list =
  Hint: Use [min_and_rest] from the previous exercise.
 [*----------------------------------------------------------------------------*)
 
-let rec selection_sort list = 
+(*let rec selection_sort list = 
   let rec selection_sort' acc list = 
     match list with
     | [] -> acc
@@ -121,8 +121,13 @@ let rec selection_sort list =
       selection_sort' (insert y acc) ys 
 
   in 
-  selection_sort' [] list
-    
+  selection_sort' [] list *)
+
+let rec selection_sort list = 
+  match ( min_and_rest list) with
+  | None -> []
+  | Some(x, xs) -> x :: selection_sort xs
+
  
 (*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*]
  Selection Sort with Arrays
@@ -150,6 +155,7 @@ let rec selection_sort list =
  # test;;
  - : int array = [|0; 4; 2; 3; 1|]
 [*----------------------------------------------------------------------------*)
+
 let swap a i j = 
   let t = a.(i) in
   a.(i) <- a.(j);
@@ -162,6 +168,7 @@ let swap a i j =
  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  index_min [|0; 2; 9; 3; 6|] 2 4 = 4
 [*----------------------------------------------------------------------------*)
+
 let index_min a lower upper = 
   let l = a.(lower) in 
   let u = a.(upper) in
@@ -175,14 +182,16 @@ let index_min a lower upper =
  [Array.to_list] combined with [randlist].
 [*----------------------------------------------------------------------------*)
 
-let selection_sort_array  array = 
+let selection_sort_array array = 
   let n = Array.length array in 
-  for i = 0 to n do
-    let a = array.(i) in 
-    array.(i) <- array.(index_min a i (i+1));
-    array.(index_min a i (i+1)) <- a
+  for i = 0 to (n - 1) do
+    for j = (i +1) to (n-1) do
+      let minimum = index_min array i j in
+      let a = array.(i) in
+      array.(i) <- array.(minimum);
+      array.(minimum) <- a
+    done
   done 
 
 
-
-
+let test = selection_sort_array [|0; 2; 9; 3; 6|]

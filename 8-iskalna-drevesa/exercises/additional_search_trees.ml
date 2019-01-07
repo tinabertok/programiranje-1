@@ -1,6 +1,11 @@
 (*-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*]
  ADDITIONAL EXERCISES 
 [*-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*)
+type 'a tree = 
+  | Empty
+  | Node of 'a tree *  'a * 'a tree
+
+let leaf x = Node(Empty, x, Empty)
 
 (*----------------------------------------------------------------------------*]
  The function [bst_of_list] constructs a bst out of the elements of a list.
@@ -8,6 +13,35 @@
  # [11; 6; 7; 0; 2; 5] |> bst_of_list |> is_bst;;
  - : bool = true
 [*----------------------------------------------------------------------------*)
+
+
+
+
+let rec insert x tree = 
+  match tree with 
+  | Empty -> leaf x
+  | Node(lt, y, rt) -> 
+  if x = y then 
+      tree
+  else if x < y then
+      Node(insert x lt, y, rt)
+  else
+      Node(lt, y, insert x rt)
+
+
+let bst_of_list list = 
+    let tree = ref Empty in
+    let _unit = 
+      for i=0 to List.length list do
+        let element = List.nth list i in 
+        insert element !tree
+      done
+      in
+    !tree
+
+
+
+
 
 (*----------------------------------------------------------------------------*]
  The function [tree_sort] sorts a list by transforming it to a tree and back.

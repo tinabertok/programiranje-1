@@ -29,6 +29,18 @@
 
 
 
+def pivot(a, start, end):
+    p = a[start]
+    small_index = 1 + start
+    for i in range(start+1, end+1):
+        if a[i] < p:
+            a[i], a[small_index] = a[small_index], a[i]
+            small_index += 1
+    a[start], a[small_index - 1] = a[small_index - 1], a[start] 
+    return small_index - 1
+
+       
+
 ##############################################################################
 # We wish to implement quicksort.
 #
@@ -42,6 +54,23 @@
 #   >>> quicksort(a)
 #   [2, 3, 4, 5, 10, 11, 15, 17, 18]
 ##############################################################################
+
+a = [10, 4, 5, 15, 11, 3, 17, 2, 18]
+
+def quicksort_part(a, start, end):
+    if start >= end:
+        return 
+    else:
+        index_p = pivot(a, start, end)
+        left = quicksort_part(a, start, index_p - 1)
+        right = quicksort_part(a, index_p + 1, end) 
+        return 
+
+
+def quicksort(a):
+    a = quicksort_part(a, 0, len(a)-1)
+    return
+
 
 
 
@@ -59,3 +88,23 @@
 # element of [a]. The array is allowed to change. The goal of the exercise is
 # to solve the problem without fully sorting [a].
 ##############################################################################
+a = [10, 4, 5, 15, 11, 3, 17, 2, 18]
+
+
+
+
+def part_kth_element(a, start, end, k):
+    index_p = pivot(a, start, end)
+    p = a[index_p]
+    if index_p == k:
+        return p
+    elif k < index_p:
+        return part_kth_element(a, start, index_p - 1, k)
+    else:
+        return part_kth_element(a, index_p + 1, end, k - index_p + 1)
+
+
+def kth_element(a, k):
+    return part_kth_element(a, 0, len(a)-1, k)
+
+

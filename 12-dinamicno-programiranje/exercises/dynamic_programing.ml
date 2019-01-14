@@ -1,4 +1,15 @@
 (* ========== Exercises 6: Dynamic programing  ========== *)
+let memoiziraj_rec odviti_f =
+  let rezultati = Hashtbl.create 512 in
+  let rec mem_f x =
+    if Hashtbl.mem rezultati x then 
+      Hashtbl.find rezultati x
+    else
+      let y = odviti_f mem_f x in
+      Hashtbl.add rezultati x y;
+      y
+  in
+  mem_f
 
 
 (*----------------------------------------------------------------------------*]
@@ -20,6 +31,39 @@ let test_matrix =
   [| [| 1 ; 2 ; 0 |];
      [| 2 ; 4 ; 5 |];
      [| 7 ; 0 ; 1 |] |]
+
+
+(*
+let max_cheese matrix = 
+  let n = Array.length matrix in 
+  let m = Array.length matrix.(0) in (*to lahko faila, če je prva vrstica prazna*)
+  let rec max_cheese' (i, j) =
+    if i >= n || j >= m then (*zaustavitveni poogoj*)
+      0
+    else
+      let right = max_cheese' (i, j+1) in 
+      let down = max_cheese' (i+1, j) in
+      let our_cheese = matrix.(i).(j) in
+      our_cheese +  max right down
+  in 
+  max_cheese' (0, 0) 
+*)
+
+
+  let max_cheese matrix = 
+    let n = Array.length matrix in 
+    let m = Array.length matrix.(0) in (*to lahko faila, če je prva vrstica prazna*)
+    let max_cheese' recursive_max_cheese' (i, j) =
+      if i >= n || j >= m then (*zaustavitveni poogoj*)
+        0
+      else
+        let right = recursive_max_cheese' (i, j+1) in 
+        let down = recursive_max_cheese' (i+1, j) in
+        let our_cheese = matrix.(i).(j) in
+        our_cheese +  max right down
+    in 
+    let memoised_max_cheese = memoiziraj_rec max_cheese' in 
+    memoised_max_cheese (0, 0)
 
 (*----------------------------------------------------------------------------*]
  We are solving the problem of alternatingly colored towers. There are four
@@ -67,3 +111,6 @@ let articles = [|
   ("Nutella", 4.99, 0.75);
   ("juice", 1.15, 2.0)
 |]
+
+
+ 

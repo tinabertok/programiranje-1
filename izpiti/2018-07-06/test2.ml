@@ -6,11 +6,13 @@ let rec zacetnih n list =
   let rec zacetnih' n list acc =
     match n, list with
     | n, _ when n > List.length list -> None
-    | n, [] -> Some acc
-    | n, x :: xs -> zacetnih' (n - 1) xs (x :: acc)
-
+    | 0, _ -> Some (List.rev acc)
+    | n, [] -> None
+    | n, x :: xs -> zacetnih' (n-1) xs (x:: acc)
     in 
-    zacetnih' n (List.rev list) [] 
+    zacetnih' n list []
+
+ 
 
 
 

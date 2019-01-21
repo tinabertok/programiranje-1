@@ -53,3 +53,78 @@ def best_value_unique(articles, max_w):
     return best_val(max_w, "0" * len(articles))
 
 print(best_value_unique(articles, 1))
+
+# The gluttonous mouse is located in the left upper corner of a matrix. It can
+#  only move one field down or one field right and at the end it must arrive at
+#  the lower right corner. On every square of the field there is a given
+#  (non-negative) amount of cheese. The mouse wants to eat as much as possible
+#  and its trying to figure out the optimal way.
+
+#  Write the function [max_cheese cheese_matrix] that given a matrix of cheese
+#  amounts calculates the overall amount of cheese that the mouse will eat if it
+#  follows the optimal way.
+#  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#  # max_cheese test_matrix;;
+#  - : int = 13
+
+def max_cheese(matrix):
+    n = len(matrix)
+    m = len(matrix[0])
+    def pomozna(i,j): 
+        if i >= n:
+            return 0
+        elif j >= m:
+            return 0 
+        else: 
+            right = pomozna(i, j+1) 
+            down = pomozna(i+1, j)
+            if right > down:
+                return right + matrix[i][j]
+            else:
+                return down + matrix[i][j]
+    return pomozna(0,0)
+
+test_matrix = [ [ 1 , 2 , 0 ],
+     [ 2 , 4 , 5 ],
+     [ 7 , 0 , 1 ] ]
+
+
+#  We are solving the problem of alternatingly colored towers. There are four
+#  different types of building blocks, two of them blue and two red. The blue
+#  blocks have heights 2 and 3 and the red ones 1 and 2.
+
+#  Write the function [alternating_towers] for a given height calculates the
+#  number of different towers of given height that we can build using alternatingly
+#  colored blocks (red on blue, blue on red etc.). We may start with any color.
+
+#  Hint: Use two mutually recursive auxilary functions using the keyword "and".
+#  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#  # alternating_towers 10;;
+#  - : int = 35
+
+
+
+@lru_cache(maxsize=None)
+def stolpi(n, color):
+    if n == 0:
+        return 1
+    elif n < 0:
+        return 0
+    else:
+        if color == 'blue':
+            option2 = stolpi(n-2, 'red')
+            option3 = stolpi(n-3, 'red')
+            option_blue = option2 + option3
+            return option_blue
+        else:
+            option2 = stolpi(n-2, 'blue')
+            option1 = stolpi(n-1, 'blue')
+            option_red = option2 + option1
+            return option_red
+        
+    
+def alternating_towers(n):
+    return stolpi(n,'blue') + stolpi(n, 'red')
+
+
+

@@ -42,7 +42,7 @@ let bst_of_list list =
 
 
 
-
+    let bst_of_list list = List.fold_right insert list Empty
 (*----------------------------------------------------------------------------*]
  The function [tree_sort] sorts a list by transforming it to a tree and back.
 
@@ -52,6 +52,7 @@ let bst_of_list list =
  - : string list = ["a"; "b"; "c"; "d"; "e"; "f"]
 [*----------------------------------------------------------------------------*)
 
+let tree_sort list = list |> bst_of_list |> list_of_tree
 
 (*----------------------------------------------------------------------------*]
  The function [follow directions tree] of type [direction list -> 'a tree -> 
@@ -65,6 +66,15 @@ let bst_of_list list =
  # follow [Right; Left; Right; Right] test_tree;;
  - : int option = None
 [*----------------------------------------------------------------------------*)
+type direction = Left | Right
+
+let rec follow directions = function
+  | Empty -> None
+  | Node(l, x, r) ->
+    (match directions with
+     | [] -> Some x
+     | Left :: tl -> follow tl l
+     | Right :: tl -> follow tl r)
 
 
 (*----------------------------------------------------------------------------*]
@@ -79,6 +89,18 @@ let bst_of_list list =
  Some (Node (Node (Node (Empty, 0, Empty), 2, Empty), 5, Empty))
 [*----------------------------------------------------------------------------*)
 
+let rec prune directions tree =
+  match directions, tree with
+  | [], _ -> Some Empty
+  | _, Empty -> None
+  | Left :: tl, Node(l, x, r) ->
+    (match prune tl l with
+     | None -> None
+     | Some new_l -> Some (Node(new_l, x, r)))
+  | Right :: tl, Node(l, x, r) ->
+    (match prune tl r with
+     |None -> None
+     | Some new_l -> Some (Node(new_l, x, r)))
 
 (*-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*]
  PHANTOM TREES
@@ -89,6 +111,11 @@ let bst_of_list list =
  but is not considered present. We assume that all trees are BST.
 [*-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*)
 
+type state = Exists | Ghost
+
+type 'a phantom_tree =
+  | P_Empty
+  | P_Node of 'a phantom_tree * 'a * 'a phantom_tree * state
 
 (*----------------------------------------------------------------------------*]
  The function [phantomize] of type ['a tree -> 'a phantom_tree] maps a regular
@@ -110,6 +137,18 @@ let bst_of_list list =
  P_Node (P_Node (P_Empty, 3, P_Empty, Ghost), 4, P_Empty, Exists), Exists)
 [*----------------------------------------------------------------------------*)
 
+let rec phantomize = function
+  | Empty -> P_Empty
+  | Node(l, x, r) ->
+    let p_l = phantomize l in
+    let p_r = phantomize r in
+    P_Node(p_l, x, p_r, Exists)
+
+let rec kill x = function
+  | P_Empty -> P_Empty
+  | P_Node(p_l, y, p_r, s) when x = y -> P_Node(p_l, y, p_r, Ghost)
+  | P_Node(p_l, y, p_r, s) when x < y -> P_Node(kill x p_l, y, p_r, s)
+  | P_Node(p_l, y, p_r, s) -> P_Node(p_l, y, kill x p_r, s)
 
 (*----------------------------------------------------------------------------*]
  The function [unphantomize] of type ['a phantom_tree -> 'a tree] maps a
@@ -122,3 +161,11 @@ let bst_of_list list =
  - : int tree = Node (Node (Node (Empty, 2, Empty), 6, Empty), 11, Empty)
 [*----------------------------------------------------------------------------*)
 
+
+let unphantomize ptree =
+  let rec list_of_ptree = function
+    | P_Empty -> []
+    | P_Node(l, x, r, Ghost) -> (list_of_ptree l) @ (list_of_ptree r)
+    | P_Node(l, x, r, Exists) -> (list_of_ptree l) @ [x] @ (list_of_ptree r)
+  in
+  ptree |> list_of_ptree |> bst_of_list

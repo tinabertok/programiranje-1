@@ -194,4 +194,4 @@ let selection_sort_array array =
   done 
 
 
-let test = selection_sort_array [|0; 2; 9; 3; 6|]
+let test = [|0; 2; 9; 3; 6|]

@@ -127,7 +127,7 @@ let drevo_v_seznam tree =
       let rec pomozna ts akk = 
       match ts with 
       | [] -> akk
-      | x :: xs -> pomozna xs ((drevo_seznam x acc) :: akk)
+      | x :: xs -> pomozna xs ((drevo_seznam x acc) @ akk)
       in 
       pomozna ds acc
   in 

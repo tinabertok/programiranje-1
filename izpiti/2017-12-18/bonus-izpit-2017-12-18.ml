@@ -50,7 +50,7 @@
    tipom /'a drevo/ z enim konstruktorjem, ki sprejme:
    - vrednost (koren) tipa /'a/ in
    - seznam (gozd) dreves tipa /'a drevo/. *)
-type 'a drevo = DopolniMe
+type 'a drevo = Drevo of 'a * 'a drevo list 
 
 (* 2.2) Definirajte naslednja rožna drevesa:
 
@@ -61,24 +61,53 @@ type 'a drevo = DopolniMe
 
  *)
 
-let t = failwith "dopolni me"
-let t' = failwith "dopolni me"
-let t'' = failwith "dopolni me"
+let t = Drevo(1, [])
+let t' = Drevo(2, [Drevo(1, []);Drevo(1, [])])
+let t'' = Drevo(3, [Drevo(1, []); Drevo(2, [Drevo(1, []);Drevo(1, [])]); Drevo(0, [])])
+
+
 
 (* 2.3) Definirajte funkcijo, ki preveri ali je dano rožno drevo list drevesa,
    torej ima prazen gozd poddreves. *)
-let je_list = failwith "dopolni me"
+let je_list = function
+  | Drevo(x, []) -> true
+  | Drevo(x, _) -> false
 
 (* 2.4) Definirajte funkcijo, ki preveri, ali drevo celih števil vsebuje zgolj pozitivna števila. *)
-let vsa_pozitivna = failwith "dopolni me"
+
+
+let rec vsa_pozitivna = function
+  | Drevo(x, _) when x <= 0 -> false
+  | Drevo(x, []) -> true
+  | Drevo(x, ds) -> 
+    let rec preveri = function
+    | [] -> true
+    | d :: ds -> if vsa_pozitivna d then preveri ds else false
+    in
+    preveri ds
 
 (* 2.5) Definirajte funkcijo, ki izračuna največjo širino rožnega drevesa, torej največjo dolžino
    gozda, ki se pojavi v kateremkoli vozlišču rožnega drevesa. *)
-let sirina_drevesa = failwith "dopolni me"
+let sirina_drevesa = function
+  | Drevo(x, []) -> 0
+  | Drevo(x, [Drevo(y, [])]) -> 1
+  | Drevo(x, ds) ->
+    let rec sirina = function
+    | [] -> 0
+    | d :: ds -> 1 + sirina ds
+    in 
+    sirina ds
+
+
 
 (* 2.6) Definirajte funkcijo, ki sestavi (poljubno) rožno drevo globine n.
    Vrednosti v korenih so poljubne. *)
-let globoko_drevo = failwith "dopolni me"
+let rec globoko_drevo n = 
+  match n with
+  | n when n < 0 -> failwith "Ne gre"
+  | 0 -> Drevo(5, [])
+  | 1 -> Drevo(5, [Drevo(6,[])])
+  | n -> Drevo(5, [globoko_drevo (n-1)])
 
 (* 2.7) Definirajte funkcijo, ki pretvori rožno drevo v seznam. Vrstni red vrednosti v seznamu
    pri tem ni pomemben.
@@ -89,4 +118,17 @@ let globoko_drevo = failwith "dopolni me"
    Opomba: kot ste videli na vajah, nekatere funkcije iz modula List,
    na primer List.map, niso repno rekurzivne, zato se jim raje
    izognite. *)
-let drevo_v_seznam = failwith "dopolni me"
+let drevo_v_seznam tree = 
+  let rec drevo_seznam tree acc = 
+    match tree with
+    | Drevo(x, []) -> x :: acc
+    | Drevo(x, ds) -> 
+      (*List.fold_left (fun acc ds -> drevo_seznam    ) acc ds*)
+      let rec pomozna ts akk = 
+      match ts with 
+      | [] -> akk
+      | x :: xs -> pomozna xs ((drevo_seznam x acc) :: akk)
+      in 
+      pomozna ds acc
+  in 
+  drevo_seznam tree []

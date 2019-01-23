@@ -39,23 +39,20 @@ let kompozitum f g x =
    tipom /'a drevo/ z enim konstruktorjem, ki sprejme:
    - vrednost (koren) tipa /'a/ in
    - seznam (gozd) dreves tipa /'a drevo/. *)
-type 'a drevo = DopolniMe
+type 'a drevo = Gozd of 'a * 'a drevo list
 
 (* 2.2) Napišite funkcijo, ki vrne koren danega rožnega drevesa. *)
-let koren = failwith "dopolni me"
+let koren = function
+  | Gozd(x, _) -> x
+
+
 
 (* 2.3) Napišite funkcijo, ki preveri, ali drevo celih števil vsebuje kakšno negativno število. *)
-let kaksno_negativno = failwith "dopolni me"
+let rec kaksno_negativno = function
+  | Gozd(x, Gozd(y, ys)) when 
 
 (* 2.4) Sestavite funkcijo, ki sprejme naravno število ter sestavi (poljubno)
    drevo, ki ima toliko otrok.
    Namig: napišite pomožno funkcijo, ki ustvari poljuben seznam dane dolžine. *)
 let drevo_z_veliko_otroci = failwith "dopolni me"
 
-(* 2.5) Sestavite funkcijo, ki izračuna število vseh vozlišč v drevesu.
-   Če želite vse točke, mora biti funkcija repno rekurzivna.
-
-   Opomba: kot ste videli na vajah, nekatere funkcije iz modula List,
-   na primer List.map, niso repno rekurzivne, zato se jim raje
-   izognite. *)
-let velikost = failwith "dopolni me"

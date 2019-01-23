@@ -10,7 +10,14 @@ from functools import lru_cache
 
 
 def najdaljse_narascajoce_podzaporedje(sez):
-    return None
+		zaporedje = []
+		for i in range(len(sez)):
+				if sez[i] == min(sez[i :]):
+						zaporedje.append(sez[i])
+				else:
+						pass
+		return zaporedje
+
 
 ###############################################################################
 # Nepreviden študent je pustil robotka z umetno inteligenco nenadzorovanega.
@@ -39,12 +46,36 @@ def najdaljse_narascajoce_podzaporedje(sez):
 ###############################################################################
 
 soba = [[0, 1, 0, 0, 2],
-        [0, 2, 2, 0, 0],
-        [0, 0, 2, 2, 0],
-        [2, 0, 0, 2, 0],
-        [0, 2, 2, 0, 0],
-        [0, 0, 0, 2, 2]]
+		[0, 2, 2, 0, 0],
+		[0, 0, 2, 2, 0],
+		[2, 0, 0, 2, 0],
+		[0, 2, 2, 0, 0],
+		[0, 0, 0, 2, 2]]
 
 
 def pobeg(soba, pozicija, koraki):
-    return None
+	n = len(soba)
+	m = len(soba[0])
+	def pomozna(pozicija, koraki):
+			(i, j) = pozicija
+			if i >= n:
+				return False
+			elif j >= m:
+				return False
+			elif soba[i][j] == 1:
+				return True
+			elif koraki > 0 and soba[i][j] == 0:
+				right = pomozna((i, j+1), koraki - 1)
+				left = pomozna((i, j-1), koraki - 1)
+				down = pomozna((i+1, j), koraki - 1)
+				up = pomozna((i-1, j), koraki - 1)
+				return right or left or down or up
+			else:
+				return False
+	return pomozna(pozicija, koraki)
+
+print(pobeg(soba, (3,1), 5))
+print(pobeg(soba, (3,1), 8))
+
+
+			

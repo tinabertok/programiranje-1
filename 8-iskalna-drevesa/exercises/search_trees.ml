@@ -78,7 +78,8 @@ let rec size = function
     | Node(lt, x, rt) -> 1 + size lt + size rt
 
 
-(* probajmo napisati še repno rekurzivni size, rabimo še dodaten akumulator da si zapomnimo vsa drevesa ki jih moramo še obdelat*)
+(* probajmo napisati še repno rekurzivni size, rabimo še dodaten akumulator da si zapomnimo 
+vsa drevesa ki jih moramo še obdelat*)
 
 let tl_rec_size tree =
     let rec size' acc queue =

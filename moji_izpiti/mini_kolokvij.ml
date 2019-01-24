@@ -19,8 +19,18 @@ let rec narascajoce = function
     | x :: y :: xs when x <= y -> narascajoce (y :: xs)
     | x :: y :: xs -> false
 
- 
-  
+let rec is_sorted = function
+  | [] | [_] -> true
+  | x :: y :: t -> x < y && is_sorted (y :: t)
+
+let rec inject x lst =
+  match lst with
+  | [] -> [x]
+  | y :: t -> if x <= y then x :: lst else y :: (inject x t)
+
+let rec sort = function
+  | [] -> []
+  | h :: t -> inject h (sort t)
 (* -------- 3 -------- *)
 
 (*let rec vstavi list x =

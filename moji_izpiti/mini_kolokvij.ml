@@ -1,14 +1,14 @@
 (* -------- 1 -------- *)
 
-let rec prva_funkcija list =
-  let rec prva_funkcija' acc list =
+let rec sum list =
+  let rec sum' acc list =
     match list with
     | [] -> acc
     | [x] -> acc + x
-    | x :: xs -> prva_funkcija' (acc + x) xs
+    | x :: xs -> sum' (acc + x) xs
 
   in
-  prva_funkcija' 0 list
+  sum' 0 list
 
 
 (* -------- 2 -------- *)
